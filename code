@@ -1,0 +1,89 @@
+from abc import ABC, abstractmethod
+from datetime import datetime
+
+# === CLASSES DE MENSAGEM ===
+
+class Mensagem(ABC):
+    def __init__(self, conteudo):
+        self.conteudo = conteudo
+        self.data_envio = datetime.now()
+
+    @abstractmethod
+    def exibir(self):
+        pass
+
+class MensagemTexto(Mensagem):
+    def exibir(self):
+        return f"[TEXTO] {self.conteudo} - Enviado em {self.data_envio}"
+
+class MensagemVideo(Mensagem):
+    def __init__(self, conteudo, arquivo, formato, duracao):
+        super().__init__(conteudo)
+        self.arquivo = arquivo
+        self.formato = formato
+        self.duracao = duracao
+
+    def exibir(self):
+        return f"[VÍDEO] {self.conteudo}, Arquivo: {self.arquivo}, Formato: {self.formato}, Duração: {self.duracao} - Enviado em {self.data_envio}"
+
+class MensagemFoto(Mensagem):
+    def __init__(self, conteudo, arquivo, formato):
+        super().__init__(conteudo)
+        self.arquivo = arquivo
+        self.formato = formato
+
+    def exibir(self):
+        return f"[FOTO] {self.conteudo}, Arquivo: {self.arquivo}, Formato: {self.formato} - Enviado em {self.data_envio}"
+
+class MensagemArquivo(Mensagem):
+    def __init__(self, conteudo, arquivo, formato):
+        super().__init__(conteudo)
+        self.arquivo = arquivo
+        self.formato = formato
+
+    def exibir(self):
+        return f"[ARQUIVO] {self.conteudo}, Arquivo: {self.arquivo}, Formato: {self.formato} - Enviado em {self.data_envio}"
+
+# === CLASSES DE CANAL ===
+
+class Canal(ABC):
+    def __init__(self, destino):
+        self.destino = destino
+
+    @abstractmethod
+    def enviar(self, mensagem: Mensagem):
+        pass
+
+class WhatsApp(Canal):
+    def enviar(self, mensagem: Mensagem):
+        print(f"WhatsApp para {self.destino}: {mensagem.exibir()}")
+
+class Telegram(Canal):
+    def enviar(self, mensagem: Mensagem):
+        print(f"Telegram para {self.destino}: {mensagem.exibir()}")
+
+class Facebook(Canal):
+    def enviar(self, mensagem: Mensagem):
+        print(f"Facebook para @{self.destino}: {mensagem.exibir()}")
+
+class Instagram(Canal):
+    def enviar(self, mensagem: Mensagem):
+        print(f"Instagram para @{self.destino}: {mensagem.exibir()}")
+
+# === EXEMPLO DE USO ===
+
+if __name__ == "__main__":
+    msg1 = MensagemTexto("Olá, tudo bem?")
+    msg2 = MensagemVideo("Vídeo importante", "video.mp4", "mp4", "2min")
+    msg3 = MensagemFoto("Confira a imagem", "foto.jpg", "jpg")
+    msg4 = MensagemArquivo("Documento anexo", "relatorio.pdf", "pdf")
+
+    canal1 = WhatsApp("+5511999998888")
+    canal2 = Telegram("+5511988887777")
+    canal3 = Facebook("pedro.dev")
+    canal4 = Instagram("pedro.insta")
+
+    canal1.enviar(msg1)
+    canal2.enviar(msg2)
+    canal3.enviar(msg3)
+    canal4.enviar(msg4)
